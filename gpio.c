@@ -30,14 +30,14 @@
 
 #include "gpio.h"
 
-static const struct gpio_pin uart_pins[] = {
+static const struct gpio_pin pins_uart[] = {
 	{ PORT_C,  6, MODE_ALT, 8, FLOAT }, /* USART6_TX, D1 */
 	{ PORT_C,  7, MODE_ALT, 8, FLOAT }, /* USART6_RX, D0 */
 
 	PINS_END
 };
 
-static const struct gpio_pin dram_pins[] = {
+static const struct gpio_pin pins_dram[] = {
 	{ PORT_F,  0, MODE_ALT, 12, PULLUP }, /* A0 */
 	{ PORT_F,  1, MODE_ALT, 12, PULLUP }, /* A1 */
 	{ PORT_F,  2, MODE_ALT, 12, PULLUP }, /* A2 */
@@ -121,13 +121,29 @@ static const struct gpio_pin pins_ltdc[] = {
 	PINS_END
 };
 
+static const struct gpio_pin pins_eth[] = {
+	{ PORT_G,  11, MODE_ALT, 11, FLOAT }, /* RMII_TX_EN */
+	{ PORT_G,  13, MODE_ALT, 11, FLOAT }, /* RMII_TXD0 */
+	{ PORT_G,  14, MODE_ALT, 11, FLOAT }, /* RMII_TXD1 */
+	{ PORT_G,   2, MODE_ALT, 11, FLOAT }, /* RMII_RXER */
+	{ PORT_C,   1, MODE_ALT, 11, FLOAT }, /* RMII_MDC */
+	{ PORT_C,   4, MODE_ALT, 11, FLOAT }, /* RMII_RXD0 */
+	{ PORT_C,   5, MODE_ALT, 11, FLOAT }, /* RMII_RXD1 */
+	{ PORT_A,   7, MODE_ALT, 11, FLOAT }, /* RMII_CRS_DV */
+	{ PORT_A,   2, MODE_ALT, 11, FLOAT }, /* RMII_MDIO */
+	{ PORT_A,   1, MODE_ALT, 11, FLOAT }, /* RMII_REF_CLK */
+
+	PINS_END
+};
+
 void
 gpio_config(struct stm32f4_gpio_softc *sc)
 {
 
-	pin_configure(sc, uart_pins);
-	pin_configure(sc, dram_pins);
+	pin_configure(sc, pins_uart);
+	pin_configure(sc, pins_dram);
 	pin_configure(sc, pins_ltdc);
+	pin_configure(sc, pins_eth);
 
 	pin_set(sc, PORT_I, 12, 1);	/* LCD_DISP */
 	pin_set(sc, PORT_K,  3, 1);	/* LCD_BL_CTRL */
