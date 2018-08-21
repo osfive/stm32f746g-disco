@@ -29,3 +29,5 @@ UART baud rate: 115200
 
 ### Program osfive
     $ sudo openocd -s /path/to/openocd/tcl -f interface/stlink-v2-1.cfg -f target/stm32f7x.cfg -c 'program obj/stm32f746g-disco.bin reset 0x08000000 exit'
+
+![alt text](https://raw.githubusercontent.com/osfive/stm32f746g-disco/master/images/stm32f746g-disco.jpg)
