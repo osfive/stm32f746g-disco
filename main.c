@@ -28,6 +28,7 @@
 #include <sys/console.h>
 #include <sys/systm.h>
 #include <sys/malloc.h>
+#include <net/ethernet.h>
 
 #include <machine/frame.h>
 
@@ -59,6 +60,7 @@ struct stm32f4_flash_softc flash_sc;
 struct stm32f4_pwr_softc pwr_sc;
 struct stm32f4_rcc_softc rcc_sc;
 struct stm32f7_eth_softc eth_sc;
+struct stm32f7_syscfg_softc syscfg_sc;
 struct stm32f4_ltdc_softc ltdc_sc;
 struct stm32f4_timer_softc timer_sc;
 struct arm_nvic_softc nvic_sc;
@@ -235,7 +237,13 @@ app_init(void)
 
 	g_data.font.draw_pixel = draw_pixel;
 
+	/* Ethernet */
 	stm32f7_eth_init(&eth_sc, ETH_BASE);
+	stm32f4_rcc_eth_reset(&rcc_sc);
+	stm32f7_syscfg_init(&syscfg_sc, SYSCFG_BASE);
+	stm32f7_syscfg_eth_rmii(&syscfg_sc);
+	udelay(10000);
+	stm32f7_eth_setup(&eth_sc, NULL);
 }
 
 void
