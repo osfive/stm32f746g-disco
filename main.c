@@ -206,6 +206,7 @@ app_init(void)
 	reg |= (GPIODEN | GPIOEEN | GPIOFEN);
 	reg |= (GPIOGEN | GPIOHEN | GPIOIEN);
 	reg |= (GPIOJEN | GPIOKEN);
+	reg |= (ETHMACRXEN | ETHMACTXEN | ETHMACEN);
 
 	stm32f4_flash_setup(&flash_sc);
 	stm32f4_rcc_setup(&rcc_sc, reg, 0, FMCEN,
