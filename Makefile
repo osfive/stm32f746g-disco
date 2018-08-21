@@ -19,6 +19,7 @@ OBJECTS =	gpio.o						\
 		osfive/sys/arm/stm/stm32f4_fmc.o		\
 		osfive/sys/arm/stm/stm32f4_timer.o		\
 		osfive/sys/arm/stm/stm32f7_syscfg.o		\
+		osfive/sys/arm/stm/stm32f7_eth.o		\
 		osfive/sys/arm/arm/nvic.o			\
 		osfive/sys/arm/arm/trap.o			\
 		osfive/sys/arm/arm/exception.o			\
