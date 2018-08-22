@@ -69,6 +69,8 @@ void app_main(void);
 
 static const struct nvic_intr_entry nvic_intr_map[NVIC_NINTRS] = {
 	[28] = { stm32f4_timer_intr, &timer_sc },
+	[61] = { stm32f7_eth_intr, &eth_sc },
+	[62] = { stm32f7_eth_wkup_intr, &eth_sc },
 }; 
 
 static const struct sdram sdram_entry = {
@@ -237,6 +239,8 @@ app_init(void)
 
 	g_data.font.draw_pixel = draw_pixel;
 
+	fl_init();
+
 	/* Ethernet */
 	stm32f7_eth_init(&eth_sc, ETH_BASE);
 	stm32f4_rcc_eth_reset(&rcc_sc);
@@ -244,6 +248,9 @@ app_init(void)
 	stm32f7_syscfg_eth_rmii(&syscfg_sc);
 	udelay(10000);
 	stm32f7_eth_setup(&eth_sc, NULL);
+
+	arm_nvic_enable_intr(&nvic_sc, 61);
+	arm_nvic_enable_intr(&nvic_sc, 62);
 }
 
 void
