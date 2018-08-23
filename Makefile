@@ -23,6 +23,7 @@ OBJECTS =	gpio.o						\
 		osfive/sys/arm/arm/nvic.o			\
 		osfive/sys/arm/arm/trap.o			\
 		osfive/sys/arm/arm/exception.o			\
+		osfive/sys/net/if.o				\
 		osfive/sys/kern/kern_malloc_fl.o		\
 		osfive/sys/kern/kern_mbuf.o			\
 		osfive/sys/kern/subr_prf.o			\
