@@ -240,6 +240,7 @@ app_init(void)
 	g_data.font.draw_pixel = draw_pixel;
 
 	fl_init();
+	fl_add_region(0x20010000, 240*1024);
 
 	/* Ethernet */
 	stm32f7_eth_init(&eth_sc, ETH_BASE);
