@@ -26,6 +26,7 @@ OBJECTS =	gpio.o						\
 		osfive/sys/net/if.o				\
 		osfive/sys/net/if_arp.o				\
 		osfive/sys/net/if_ether.o			\
+		osfive/sys/netinet/in.o				\
 		osfive/sys/netinet/ip_input.o			\
 		osfive/sys/kern/kern_malloc_fl.o		\
 		osfive/sys/kern/kern_mbuf.o			\
