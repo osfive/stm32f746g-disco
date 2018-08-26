@@ -25,10 +25,20 @@
  */
 
 #include <sys/cdefs.h>
+#include <sys/errno.h>
+#include <sys/param.h>
 #include <sys/console.h>
 #include <sys/systm.h>
 #include <sys/malloc.h>
+#include <sys/mbuf.h>
+#include <sys/lock.h>
+
+#include <sys/mbuf.h>
+#include <net/if.h>
 #include <net/ethernet.h>
+#include <net/if_arp.h>
+#include <netinet/in.h>
+#include <netinet/if_ether.h>
 
 #include <machine/frame.h>
 
@@ -47,6 +57,9 @@
 #define	FONT_ADDR	0x080b0000
 #define	DISPLAY_WIDTH	480
 #define	DISPLAY_HEIGHT	272
+
+extern uint32_t _sbss;
+extern uint32_t _ebss;
 
 static struct global_data {
 	uint32_t ptr;
@@ -196,6 +209,30 @@ display_clear(void)
 }
 
 static void
+eth_setup(void)
+{
+	struct in_addr in;
+
+	/* Ethernet */
+
+	if_init();
+	stm32f7_eth_init(&eth_sc, ETH_BASE);
+	stm32f4_rcc_eth_reset(&rcc_sc);
+	stm32f7_syscfg_init(&syscfg_sc, SYSCFG_BASE);
+	stm32f7_syscfg_eth_rmii(&syscfg_sc);
+	udelay(10000);
+	if (stm32f7_eth_setup(&eth_sc, NULL) != 0)
+		return;
+
+	/* Setup some IP address */
+	in.s_addr = htonl(0x0a020002);
+	in_aifaddr(eth_sc.ifp, in, 0xffffff00);
+
+	arm_nvic_enable_intr(&nvic_sc, 61);
+	arm_nvic_enable_intr(&nvic_sc, 62);
+}
+
+static void
 app_init(void)
 {
 	uint32_t reg;
@@ -242,16 +279,19 @@ app_init(void)
 	fl_init();
 	fl_add_region(0x20010000, 240*1024);
 
-	/* Ethernet */
-	stm32f7_eth_init(&eth_sc, ETH_BASE);
-	stm32f4_rcc_eth_reset(&rcc_sc);
-	stm32f7_syscfg_init(&syscfg_sc, SYSCFG_BASE);
-	stm32f7_syscfg_eth_rmii(&syscfg_sc);
-	udelay(10000);
-	stm32f7_eth_setup(&eth_sc, NULL);
+	eth_setup();
+}
 
-	arm_nvic_enable_intr(&nvic_sc, 61);
-	arm_nvic_enable_intr(&nvic_sc, 62);
+static void
+clear_bss(void)
+{
+	uint32_t *sbss;
+	uint32_t *ebss;
+
+	sbss = (uint32_t *)&_sbss;
+	ebss = (uint32_t *)&_ebss;
+	while (sbss < ebss)
+		*sbss++ = 0;
 }
 
 void
@@ -260,6 +300,8 @@ app_main(void)
 	uint8_t text[64];
 	int err;
 	int i;
+
+	clear_bss();
 
 	app_init();
 
@@ -289,15 +331,22 @@ app_main(void)
 void *
 malloc(size_t size)
 {
+	void *ret;
 
-	return (fl_malloc(size));
+	spinlock_enter();
+	ret = fl_malloc(size);
+	spinlock_exit();
+
+	return (ret);
 }
 
 void
 free(void *ptr)
 {
 
-	return (fl_free(ptr));
+	spinlock_enter();
+	fl_free(ptr);
+	spinlock_exit();
 }
 
 void *
