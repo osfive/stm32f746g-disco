@@ -228,6 +228,7 @@ eth_setup(void)
 	in.s_addr = htonl(0x0a020002);
 	in_aifaddr(eth_sc.ifp, in, 0xffffff00);
 
+	/* Enable eth and eth wkup interrupts */
 	arm_nvic_enable_intr(&nvic_sc, 61);
 	arm_nvic_enable_intr(&nvic_sc, 62);
 }
