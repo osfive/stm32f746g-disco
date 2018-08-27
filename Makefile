@@ -24,21 +24,21 @@ OBJECTS =	gpio.o						\
 		osfive/sys/arm/arm/trap.o			\
 		osfive/sys/arm/arm/machdep.o			\
 		osfive/sys/arm/arm/exception.o			\
-		osfive/sys/net/if.o				\
-		osfive/sys/net/if_ether.o			\
-		osfive/sys/netinet/in.o				\
-		osfive/sys/netinet/in_cksum.o			\
-		osfive/sys/netinet/if_ether.o			\
-		osfive/sys/netinet/if_ethersubr.o		\
-		osfive/sys/net/if_ethersubr.o			\
-		osfive/sys/netinet/ip_icmp.o			\
-		osfive/sys/netinet/ip_input.o			\
-		osfive/sys/netinet/ip_output.o			\
+		osfive/sys/kern/subr_console.o			\
 		osfive/sys/kern/kern_malloc_fl.o		\
 		osfive/sys/kern/kern_mbuf.o			\
 		osfive/sys/kern/kern_panic.o			\
 		osfive/sys/kern/subr_prf.o			\
-		osfive/sys/kern/subr_console.o			\
+		osfive/sys/net/if.o				\
+		osfive/sys/net/if_ether.o			\
+		osfive/sys/net/if_ethersubr.o			\
+		osfive/sys/netinet/in.o				\
+		osfive/sys/netinet/in_cksum.o			\
+		osfive/sys/netinet/if_ether.o			\
+		osfive/sys/netinet/if_ethersubr.o		\
+		osfive/sys/netinet/ip_icmp.o			\
+		osfive/sys/netinet/ip_input.o			\
+		osfive/sys/netinet/ip_output.o			\
 		start.o
 
 .include "osfive/lib/libfont/Makefile.inc"
@@ -60,6 +60,11 @@ all: compile link binary
 
 ${LDSCRIPT}: ${LDSCRIPT_TPL}
 	cp ${LDSCRIPT_TPL} ${LDSCRIPT}
+
+info:
+	@echo Objdir: ${.OBJDIR}
+	@echo CC: ${CC}
+	@echo LD: ${LD}
 
 clean:
 	rm -f ${OBJECTS:M*} ${LDSCRIPT} ${APP}.elf ${APP}.srec
