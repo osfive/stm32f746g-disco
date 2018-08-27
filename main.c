@@ -225,8 +225,10 @@ eth_setup(void)
 		return;
 
 	/* Setup some IP address */
+	spinlock_enter();
 	in.s_addr = htonl(0x0a020002);
 	in_aifaddr(eth_sc.ifp, in, 0xffffff00);
+	spinlock_exit();
 
 	/* Enable eth and eth wkup interrupts */
 	arm_nvic_enable_intr(&nvic_sc, 61);
