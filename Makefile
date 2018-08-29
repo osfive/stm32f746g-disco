@@ -39,6 +39,7 @@ OBJECTS =	gpio.o						\
 		osfive/sys/netinet/ip_icmp.o			\
 		osfive/sys/netinet/ip_input.o			\
 		osfive/sys/netinet/ip_output.o			\
+		osfive/sys/netinet6/ip6_input.o			\
 		start.o
 
 .include "osfive/lib/libfont/Makefile.inc"
