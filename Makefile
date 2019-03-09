@@ -42,22 +42,20 @@ OBJECTS =	gpio.o						\
 		osfive/sys/netinet6/ip6_input.o			\
 		start.o
 
-.include "osfive/lib/libfont/Makefile.inc"
-.include "osfive/lib/libc/Makefile.inc"
-# .include "osfive/lib/libaeabi/Makefile.inc"
-# .include "osfive/lib/libFLAC/Makefile.inc"
+LIBRARIES = LIBC LIBFONT
 
-CFLAGS =	-mthumb -mcpu=cortex-m7						\
-		-O -nostdlib -fno-pic -fno-builtin-printf			\
-		-pipe -g -nostdinc -fno-omit-frame-pointer			\
-		-fno-optimize-sibling-calls -ffreestanding -fwrapv		\
-		-fdiagnostics-show-option -fms-extensions 			\
-		-Wall -Wredundant-decls -Wnested-externs -Wstrict-prototypes	\
-		-Wmissing-prototypes -Wpointer-arith -Winline -Wcast-qual	\
-		-Wundef -Wno-pointer-sign -Wno-format -Wmissing-include-dirs	\
-		-Wno-unknown-pragmas -Werror
+CFLAGS =	-mthumb -mcpu=cortex-m7					\
+		-O -nostdlib -fno-pic -fno-builtin-printf		\
+		-pipe -g -nostdinc -fno-omit-frame-pointer		\
+		-fno-optimize-sibling-calls -ffreestanding -fwrapv	\
+		-fdiagnostics-show-option -fms-extensions 		\
+		-Wall -Wredundant-decls -Wnested-externs		\
+		-Wstrict-prototypes -Wmissing-prototypes		\
+		-Wpointer-arith -Winline -Wcast-qual			\
+		-Wundef -Wno-pointer-sign -Wno-format			\
+		-Wmissing-include-dirs -Wno-unknown-pragmas -Werror
 
-all: compile link binary
+all:	__compile __link __binary
 
 ${LDSCRIPT}: ${LDSCRIPT_TPL}
 	cp ${LDSCRIPT_TPL} ${LDSCRIPT}
@@ -70,7 +68,6 @@ info:
 clean:
 	rm -f ${OBJECTS:M*} ${LDSCRIPT} ${APP}.elf ${APP}.srec
 
-.include "osfive/mk/user.mk"
-.include "osfive/mk/compile.mk"
-.include "osfive/mk/link.mk"
-.include "osfive/mk/binutils.mk"
+.include "osfive/lib/libc/Makefile.inc"
+.include "osfive/lib/libfont/Makefile.inc"
+.include "osfive/mk/bsd.mk"
