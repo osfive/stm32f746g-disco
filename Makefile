@@ -1,12 +1,13 @@
 APP =		stm32f746g-disco
-ARCH =		arm
+MACHINE =	arm
 
 CC =		${CROSS_COMPILE}gcc
 LD =		${CROSS_COMPILE}ld
 OBJCOPY =	${CROSS_COMPILE}objcopy
 
-LDSCRIPT =	${.OBJDIR}/ldscript
-LDSCRIPT_TPL =	${.CURDIR}/ldscript.tpl
+OBJDIR =	obj
+LDSCRIPT =	${OBJDIR}/ldscript
+LDSCRIPT_TPL =	${CURDIR}/ldscript.tpl
 
 OBJECTS =	gpio.o						\
 		main.o						\
@@ -20,29 +21,10 @@ OBJECTS =	gpio.o						\
 		osfive/sys/arm/stm/stm32f4_timer.o		\
 		osfive/sys/arm/stm/stm32f7_syscfg.o		\
 		osfive/sys/arm/stm/stm32f7_eth.o		\
-		osfive/sys/arm/arm/nvic.o			\
-		osfive/sys/arm/arm/trap.o			\
-		osfive/sys/arm/arm/machdep.o			\
-		osfive/sys/arm/arm/exception.o			\
-		osfive/sys/kern/subr_console.o			\
-		osfive/sys/kern/kern_malloc_fl.o		\
-		osfive/sys/kern/kern_mbuf.o			\
-		osfive/sys/kern/kern_panic.o			\
-		osfive/sys/kern/subr_prf.o			\
-		osfive/sys/net/if.o				\
-		osfive/sys/net/if_ether.o			\
-		osfive/sys/net/if_ethersubr.o			\
-		osfive/sys/netinet/in.o				\
-		osfive/sys/netinet/in_cksum.o			\
-		osfive/sys/netinet/if_ether.o			\
-		osfive/sys/netinet/if_ethersubr.o		\
-		osfive/sys/netinet/ip_icmp.o			\
-		osfive/sys/netinet/ip_input.o			\
-		osfive/sys/netinet/ip_output.o			\
-		osfive/sys/netinet6/ip6_input.o			\
 		start.o
 
-LIBRARIES = LIBC LIBFONT
+KERNEL =	malloc net
+LIBRARIES =	libc libfont
 
 CFLAGS =	-mthumb -mcpu=cortex-m7					\
 		-O -nostdlib -fno-pic -fno-builtin-printf		\
@@ -55,19 +37,14 @@ CFLAGS =	-mthumb -mcpu=cortex-m7					\
 		-Wundef -Wno-pointer-sign -Wno-format			\
 		-Wmissing-include-dirs -Wno-unknown-pragmas -Werror
 
-all:	__compile __link __binary
+all:	${OBJDIR}/${APP}.elf
 
 ${LDSCRIPT}: ${LDSCRIPT_TPL}
-	cp ${LDSCRIPT_TPL} ${LDSCRIPT}
-
-info:
-	@echo Objdir: ${.OBJDIR}
-	@echo CC: ${CC}
-	@echo LD: ${LD}
+	@cp ${LDSCRIPT_TPL} ${LDSCRIPT}
 
 clean:
-	rm -f ${OBJECTS:M*} ${LDSCRIPT} ${APP}.elf ${APP}.srec
+	@rm -f ${OBJECTS} ${LDSCRIPT} ${OBJDIR}/${APP}.*
 
-.include "osfive/lib/libc/Makefile.inc"
-.include "osfive/lib/libfont/Makefile.inc"
-.include "osfive/mk/bsd.mk"
+include osfive/lib/libc/Makefile.inc
+include osfive/lib/libfont/Makefile.inc
+include osfive/mk/default.mk

@@ -31,7 +31,7 @@
 #include <sys/systm.h>
 #include <sys/malloc.h>
 #include <sys/mbuf.h>
-#include <sys/lock.h>
+#include <sys/thread.h>
 
 #include <sys/mbuf.h>
 #include <net/if.h>
@@ -225,10 +225,10 @@ eth_setup(void)
 		return;
 
 	/* Setup some IP address */
-	spinlock_enter();
+	critical_enter();
 	in.s_addr = htonl(0x0a020002);
 	in_aifaddr(eth_sc.ifp, in, 0xffffff00);
-	spinlock_exit();
+	critical_exit();
 
 	/* Enable eth and eth wkup interrupts */
 	arm_nvic_enable_intr(&nvic_sc, 61);
@@ -305,6 +305,8 @@ app_main(void)
 	int i;
 
 	clear_bss();
+	relocate_data();
+	md_init();
 
 	app_init();
 
@@ -329,39 +331,4 @@ app_main(void)
 		i += 1;
 		usleep(100000);
 	}
-}
-
-void *
-malloc(size_t size)
-{
-	void *ret;
-
-	spinlock_enter();
-	ret = fl_malloc(size);
-	spinlock_exit();
-
-	return (ret);
-}
-
-void
-free(void *ptr)
-{
-
-	spinlock_enter();
-	fl_free(ptr);
-	spinlock_exit();
-}
-
-void *
-calloc(size_t number, size_t size)
-{
-
-	return (fl_calloc(number, size));
-}
-
-void *
-realloc(void *ptr, size_t size)
-{
-
-	return (fl_realloc(ptr, size));
 }
